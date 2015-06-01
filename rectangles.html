@@ -1,0 +1,42 @@
+<html>
+
+<head>
+  <title>Drawing rectangles in an HTML5 Canvas</title>
+  <script src="http://code.jquery.com/jquery-2.1.4.min.js" type="text/javascript" charset="utf-8"></script>
+</head>
+
+<body>
+  <canvas id="pic" width="640" height="480" style="border-style: solid;border-width: 1px;"></canvas>
+
+  <button type="button" id="add1000">Add 1000</button>
+
+  <script type="text/javascript">
+    $( document ).ready(function() {
+      $( "#add1000" ).bind( "click", function( event ) {
+
+        var canvas = document.getElementById('pic');
+        var ctx = canvas.getContext('2d');
+        var x,y,w,h;
+        var alpha;
+        var r,g,b;
+
+        ctx.globalCompositeOperation = 'difference';
+
+        for (i = 0; i < 1000; i++) { 
+          x = Math.floor((Math.random() * 600) + 1);
+          y = Math.floor((Math.random() * 400) + 1);
+          w = Math.floor((Math.random() * 60) + 10);
+          h = Math.floor((Math.random() * 60) + 10);
+          r = Math.floor((Math.random() * 255) + 1);
+          g = Math.floor((Math.random() * 255) + 1);
+          b = Math.floor((Math.random() * 255) + 1);
+          alpha = Math.random();
+          ctx.fillStyle = "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
+          ctx.fillRect(x,y,w,h);
+        }
+        
+      });
+    });
+  </script>
+</body>
+</html>
