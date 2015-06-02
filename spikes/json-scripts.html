@@ -6,7 +6,7 @@
 </head>
 
 <body>
-  <canvas id="pic" width="640" height="480" autofocus="true" style="border-style: solid;border-width: 1px;"></canvas>
+  <canvas id="pic" width="256" height="256" autofocus="true" style="border-style: solid;border-width: 1px;"></canvas>
 
   <button type="button" id="run">Random Script</button>
 
@@ -30,9 +30,11 @@
           case 2:
           case 3:
           case 4:
+          case 5:
+          case 6:
             script = script + " circle";
             break;
-          case 5:
+          case 7:
             script = script + " color";
             break;
           default:
@@ -42,25 +44,27 @@
       return script
     }
 
-    function run_script (script,canvas) {
+    function draw_script (script,canvas) {
       var ctx = canvas.getContext('2d');
       var numbers = [];
       var tokens = script.split(" ");
       var w = canvas.width;
       var h = canvas.height;
 
-      // ctx.globalCompositeOperation = 'difference';
+      ctx.clearRect ( 0 , 0 , canvas.width + 100, canvas.height + 100);
+      // ctx.globalCompositeOperation = 'xor';
 
 
-      function setColor (r,g,b,alpha) {
-        ctx.fillStyle = "rgba(" + Math.floor(r*256) + 
-          ", " + Math.floor(g*256) + ", " + 
-          Math.floor(b*256) + ", " + alpha + ")";
+      function setColor (h,s,l,alpha) {
+        ctx.fillStyle = "hsla(" + Math.floor(h*360) + 
+          ", " + Math.floor(s*100) + "%, " + 
+          Math.floor(l*100) + "%, " + alpha + ")";
       };
 
       function makeCircle (x,y,r) {
+        var smallest_dimension = Math.min(h,w)
         ctx.beginPath();
-        ctx.arc(x*w, y*h, r*100, 0, 2 * Math.PI, false);
+        ctx.arc(x*w, y*h, r*smallest_dimension/4, 0, 2 * Math.PI, false);
         ctx.closePath();
         ctx.fill();
       }
@@ -78,20 +82,17 @@
           case "color":
             if (numbers.length > 3) {
               var alpha = numbers.pop();
-              var b = numbers.pop();
-              var g = numbers.pop();
-              var r = numbers.pop();
-              setColor(r,g,b,alpha);
+              var l = numbers.pop();
+              var s = numbers.pop();
+              var h = numbers.pop();
+              setColor(h,s,l,alpha);
             };
             break;
           default:
             numbers.push( parseFloat(token) );
         }
       });
-    
-      // alert("Number stack:" + numbers);
     }
-
   </script>
 
 
@@ -100,7 +101,7 @@
       $( "#run" ).bind( "click", function( event ) {        
         var script = random_script(1000);
         var canvas = document.getElementById('pic');
-        run_script(script,canvas);
+        draw_script(script,canvas);
       });
     });
   </script>
