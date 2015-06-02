@@ -1,0 +1,66 @@
+<html>
+
+<head>
+  <title>Drawing circles on an HTML5 Canvas based on JSON scripts</title>
+  <script src="http://code.jquery.com/jquery-2.1.4.min.js" type="text/javascript" charset="utf-8"></script>
+</head>
+
+<body>
+  <canvas id="pic" width="640" height="480" style="border-style: solid;border-width: 1px;"></canvas>
+
+  <button type="button" id="add1000">Add 1000</button>
+
+  <script type="text/javascript">
+    function any_circle(context) {
+    }
+
+    function any_fillStyle(context) {
+    }
+
+    function any_compositeMode(context) {
+    }
+
+    function randomProgram(len) {
+      var new_program = [];
+      for (i = 0; i < len; i++) {
+        // push a function call function() { myFunction(its,args); }
+        // and then execute the program by calling new_program[i]();
+      }
+      return new_program;
+    }  
+  </script>
+
+
+  <script type="text/javascript">
+    $( document ).ready(function() {
+      $( "#add1000" ).bind( "click", function( event ) {
+
+        var canvas = document.getElementById('pic');
+        var ctx = canvas.getContext('2d');
+        var x,y,radius;
+        var alpha;
+        var r,g,b;
+
+        ctx.globalCompositeOperation = 'difference';
+
+        for (i = 0; i < 1000; i++) { 
+          x = Math.floor((Math.random() * 640) + 1);
+          y = Math.floor((Math.random() * 480) + 1);
+          radius = Math.floor((Math.random() * 100) + 10);
+          r = Math.floor((Math.random() * 255) + 1);
+          g = Math.floor((Math.random() * 255) + 1);
+          b = Math.floor((Math.random() * 255) + 1);
+          alpha = Math.random();
+
+          ctx.beginPath();
+          ctx.fillStyle = "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
+          ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
+          ctx.closePath();
+          ctx.fill();
+        }
+        
+      });
+    });
+  </script>
+</body>
+</html>
