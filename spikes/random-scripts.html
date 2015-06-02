@@ -21,7 +21,7 @@
 
     function random_script (len) {
       var choice;
-      var script = "0.0";
+      var tokens = [];
 
       for (i = 0; i < len; i++) {
         choice = Math.floor((Math.random() * 20) + 1);
@@ -32,33 +32,35 @@
           case 4:
           case 5:
           case 6:
-            script = script + " circle";
+            tokens.push("circle");
             break;
           case 7:
-            script = script + " color";
+            tokens.push("color");
             break;
           default:
-            script = script + " " + Math.random().toFixed(5);
+            tokens.push(Math.random().toFixed(5));
         }
       }
-      return script
+      return tokens.join(",")
     }
 
     function draw_script (script,canvas) {
       var ctx = canvas.getContext('2d');
       var numbers = [];
-      var tokens = script.split(" ");
+      var tokens = script.split(",");
       var w = canvas.width;
       var h = canvas.height;
 
-      ctx.clearRect ( 0 , 0 , canvas.width + 100, canvas.height + 100);
+      // ctx.clearRect ( 0 , 0 , canvas.width + 100, canvas.height + 100);
       // ctx.globalCompositeOperation = 'xor';
 
 
       function setColor (h,s,l,alpha) {
-        ctx.fillStyle = "hsla(" + Math.floor(h*360) + 
-          ", " + Math.floor(s*100) + "%, " + 
-          Math.floor(l*100) + "%, " + alpha + ")";
+        ctx.fillStyle = "hsla(" + 
+          Math.floor(h*360) + ", " + 
+          Math.floor(s*100) + "%, " + 
+          Math.floor(l*100) + "%, " + 
+          alpha + ")";
       };
 
       function makeCircle (x,y,r) {
