@@ -6,59 +6,101 @@
 </head>
 
 <body>
-  <canvas id="pic" width="640" height="480" style="border-style: solid;border-width: 1px;"></canvas>
+  <canvas id="pic" width="640" height="480" autofocus="true" style="border-style: solid;border-width: 1px;"></canvas>
 
-  <button type="button" id="add1000">Add 1000</button>
+  <button type="button" id="run">Random Script</button>
 
   <script type="text/javascript">
-    function any_circle(context) {
-    }
+    // a Slather script is a list of tokens
+    // all numbers are floats on [0.0,1.0]
+    // - a number is pushed to the numbers stack
+    // the instructions are:
+    // - circle: takes 3 numbers for x, y, radius
+    // - color: takes 4 numbers for r,g,b,alpha
+    // an instruction only works if there are enough numbers on the stack, and pops them if so
 
-    function any_fillStyle(context) {
-    }
+    function random_script (len) {
+      var choice;
+      var script = "0.0";
 
-    function any_compositeMode(context) {
-    }
-
-    function randomProgram(len) {
-      var new_program = [];
       for (i = 0; i < len; i++) {
-        // push a function call function() { myFunction(its,args); }
-        // and then execute the program by calling new_program[i]();
+        choice = Math.floor((Math.random() * 20) + 1);
+        switch (choice) {
+          case 1:
+          case 2:
+          case 3:
+          case 4:
+            script = script + " circle";
+            break;
+          case 5:
+            script = script + " color";
+            break;
+          default:
+            script = script + " " + Math.random().toFixed(5);
+        }
       }
-      return new_program;
-    }  
+      return script
+    }
+
+    function run_script (script,canvas) {
+      var ctx = canvas.getContext('2d');
+      var numbers = [];
+      var tokens = script.split(" ");
+      var w = canvas.width;
+      var h = canvas.height;
+
+      // ctx.globalCompositeOperation = 'difference';
+
+
+      function setColor (r,g,b,alpha) {
+        ctx.fillStyle = "rgba(" + Math.floor(r*256) + 
+          ", " + Math.floor(g*256) + ", " + 
+          Math.floor(b*256) + ", " + alpha + ")";
+      };
+
+      function makeCircle (x,y,r) {
+        ctx.beginPath();
+        ctx.arc(x*w, y*h, r*100, 0, 2 * Math.PI, false);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      jQuery.each(tokens, function( index, token ) {
+        switch (token) {
+          case "circle":
+            if (numbers.length > 2) {
+              var radius = numbers.pop();
+              var y = numbers.pop();
+              var x = numbers.pop();
+              makeCircle(x,y,radius);
+            };
+            break;
+          case "color":
+            if (numbers.length > 3) {
+              var alpha = numbers.pop();
+              var b = numbers.pop();
+              var g = numbers.pop();
+              var r = numbers.pop();
+              setColor(r,g,b,alpha);
+            };
+            break;
+          default:
+            numbers.push( parseFloat(token) );
+        }
+      });
+    
+      // alert("Number stack:" + numbers);
+    }
+
   </script>
 
 
   <script type="text/javascript">
     $( document ).ready(function() {
-      $( "#add1000" ).bind( "click", function( event ) {
-
+      $( "#run" ).bind( "click", function( event ) {        
+        var script = random_script(1000);
         var canvas = document.getElementById('pic');
-        var ctx = canvas.getContext('2d');
-        var x,y,radius;
-        var alpha;
-        var r,g,b;
-
-        ctx.globalCompositeOperation = 'difference';
-
-        for (i = 0; i < 1000; i++) { 
-          x = Math.floor((Math.random() * 640) + 1);
-          y = Math.floor((Math.random() * 480) + 1);
-          radius = Math.floor((Math.random() * 100) + 10);
-          r = Math.floor((Math.random() * 255) + 1);
-          g = Math.floor((Math.random() * 255) + 1);
-          b = Math.floor((Math.random() * 255) + 1);
-          alpha = Math.random();
-
-          ctx.beginPath();
-          ctx.fillStyle = "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
-          ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
-          ctx.closePath();
-          ctx.fill();
-        }
-        
+        run_script(script,canvas);
       });
     });
   </script>
