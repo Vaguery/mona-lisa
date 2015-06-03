@@ -6,9 +6,17 @@
 </head>
 
 <body>
-  <canvas id="pic" width="256" height="256" autofocus="true" style="border-style: solid;border-width: 1px;"></canvas>
+  <button type="button" id="run">Randomize</button> <br />
 
-  <button type="button" id="run">Random Script</button>
+  <canvas id="pic-1" class="slather" width="256" height="256" autofocus="true" style="border-style: solid;border-width: 1px;"></canvas>  
+  <canvas id="pic-2" class="slather" width="256" height="256" autofocus="true" style="border-style: solid;border-width: 1px;"></canvas>
+  <canvas id="pic-3" class="slather" width="256" height="256" autofocus="true" style="border-style: solid;border-width: 1px;"></canvas>
+  <canvas id="pic-4" class="slather" width="256" height="256" autofocus="true" style="border-style: solid;border-width: 1px;"></canvas>
+  <canvas id="pic-5" class="slather" width="256" height="256" autofocus="true" style="border-style: solid;border-width: 1px;"></canvas>
+  <canvas id="pic-6" class="slather" width="256" height="256" autofocus="true" style="border-style: solid;border-width: 1px;"></canvas>
+  <canvas id="pic-7" class="slather" width="256" height="256" autofocus="true" style="border-style: solid;border-width: 1px;"></canvas>
+  <canvas id="pic-8" class="slather" width="256" height="256" autofocus="true" style="border-style: solid;border-width: 1px;"></canvas>
+
 
   <script type="text/javascript">
     // a Slather script is a list of tokens
@@ -19,22 +27,26 @@
     // - color: takes 4 numbers for r,g,b,alpha
     // an instruction only works if there are enough numbers on the stack, and pops them if so
 
+    function random_item(array) {
+      var which = Math.floor( Math.random()*array.length);
+      return array[which];
+    }
+
     function random_script (len) {
       var choice;
       var tokens = [];
+      var modes = ["mode:source-over", "mode:source-in", "mode:source-out", "mode:source-atop", "mode:destination-over", "mode:destination-in", "mode:destination-out", "mode:destination-atop", "mode:lighter", "mode:copy", "mode:multiply", "mode:screen", "mode:overlay", "mode:darken", "mode:lighten", "mode:color-dodge", "mode:color-burn", "mode:exclusion", "mode:hue", "mode:saturation", "mode:color", "mode:luminosity", "mode:difference", "mode:xor"];
 
       for (i = 0; i < len; i++) {
-        choice = Math.floor((Math.random() * 20) + 1);
-        switch (choice) {
-          case 1:
-          case 2:
-          case 3:
-          case 4:
-          case 5:
-          case 6:
+        choice = Math.floor((Math.random() * 100) + 1);
+        switch (true) {
+          case (choice < 4):
+            tokens.push(random_item(modes));
+            break;
+          case (choice < 30):
             tokens.push("circle");
             break;
-          case 7:
+          case (choice < 36):
             tokens.push("color");
             break;
           default:
@@ -51,9 +63,8 @@
       var w = canvas.width;
       var h = canvas.height;
 
-      // ctx.clearRect ( 0 , 0 , canvas.width + 100, canvas.height + 100);
-      // ctx.globalCompositeOperation = 'destination-out';
-
+      ctx.clearRect ( 0 , 0 , canvas.width + 100, canvas.height + 100);
+      console.log(script);
 
       function setColor (h,s,l,alpha) {
         ctx.fillStyle = "hsla(" + 
@@ -71,41 +82,49 @@
         ctx.fill();
       }
 
-      jQuery.each(tokens, function( index, token ) {
-        switch (token) {
-          case "circle":
-            if (numbers.length > 2) {
-              var radius = numbers.pop();
-              var y = numbers.pop();
-              var x = numbers.pop();
-              makeCircle(x,y,radius);
-            };
-            break;
-          case "color":
-            if (numbers.length > 3) {
-              var alpha = numbers.pop();
-              var l = numbers.pop();
-              var s = numbers.pop();
-              var h = numbers.pop();
-              setColor(h,s,l,alpha);
-            };
-            break;
-          default:
-            numbers.push( parseFloat(token) );
-        }
-      });
-    }
-  </script>
+      $.each(tokens, function( index, token ) {
+        if (/mode\:/.test(token)) {
+          mode_name = token.split(":").pop();
+          ctx.globalCompositeOperation = mode_name;
+          // console.log("switched to " + mode_name);
+        } else {
+          switch (token) {
+            case "circle":
+              if (numbers.length > 2) {
+                var radius = numbers.pop();
+                var y = numbers.pop();
+                var x = numbers.pop();
+                makeCircle(x,y,radius);
+              };
+              break;
+            case "color":
+              if (numbers.length > 3) {
+                var alpha = numbers.pop();
+                var l = numbers.pop();
+                var s = numbers.pop();
+                var h = numbers.pop();
+                setColor(h,s,l,alpha);
+              };
+              break;
+            default:
+              numbers.push( parseFloat(token) );
+            }
+          }
+        });
+      }
+    </script>
 
 
-  <script type="text/javascript">
-    $( document ).ready(function() {
-      $( "#run" ).bind( "click", function( event ) {        
-        var script = random_script(1000);
-        var canvas = document.getElementById('pic');
-        draw_script(script,canvas);
+    <script type="text/javascript">
+      $( document ).ready(function() {
+        $( "#run" ).bind( "click", function( event ) {  
+          var script;      
+          $(".slather").each(function( index ) {
+            script = random_script(3000);
+            draw_script(script,this);
+          });        
+        });
       });
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>
